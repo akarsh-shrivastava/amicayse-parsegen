@@ -2,6 +2,10 @@
 
 #include <algorithm>
 
+ParseGen::ParseGen(unsigned char flag){
+    flags = flag;
+}
+
 set<int> ParseGen::get_first(NonTerminal tok){
     if(first[tok].empty()){
         for(vector<vector<int>>::iterator i=rules[tok].begin(); i!=rules[tok].end(); ++i){
@@ -35,9 +39,10 @@ set<int> ParseGen::get_follow(NonTerminal tok){
         if (follow[tok].size()>1)
             return follow[tok];
     }
-    else 
+    else{
         if (!follow[tok].empty())
             return follow[tok];
+    }
 
     for(map<NonTerminal, vector<vector<int>>>::iterator i=rules.begin(); i!=rules.end(); ++i){
         for(vector<vector<int>>::iterator k=i->second.begin(); k!=i->second.end(); ++k){
@@ -76,21 +81,27 @@ set<int> ParseGen::get_follow(NonTerminal tok){
 }
 void ParseGen::calc_follow(){
     follow[(NonTerminal)numeric_limits<int>::min()].insert(dollar);
+
     for(map<NonTerminal, vector<vector<int>>>::iterator i=rules.begin(); i!=rules.end(); ++i){
+
         follow[i->first] = get_follow(i->first);
 
         // building table
-        //cout<<i->first<<": ";
+        if(flags == 0x01)
+            cout<<i->first<<": ";
         for(vector<vector<int>>::iterator j=rules[i->first].begin(); j!=rules[i->first].end(); ++j){
-            //cout<<*(j->begin())<<" | ";
+            if(flags == 0x01)
+                cout<<*(j->begin())<<" | ";
             if( *(j->begin()) == epsilon ){
                 for(set<int>::iterator k=follow[i->first].begin(); k!=follow[i->first].end(); ++k){
-                    //cout<<*k<<":";
+                    if(flags == 0x01)
+                        cout<<*k<<":";
                     table[i->first][(TokenType)*k] = j;
                 }
             }
         }
-        //cout<<"\n";
+        if(flags == 0x01)
+            cout<<"\n";
     }
 }
 
@@ -108,7 +119,9 @@ ParseTreeNode* ParseGen::add_node(int node){
         }
         else{
             throw ParserException(string()
-                +"Expected "
+                +"Line "
+                +to_string(itr->line)
+                +": Expected "
                 +to_string(node)
                 +", got "
                 +to_string(itr->type)

@@ -25,7 +25,11 @@
         set<int> get_follow(NonTerminal);
         ParseTreeNode* add_node(int);
 
+        unsigned char flags;
+
         public:
+        ParseGen(unsigned char);
+
         void set_rules(map<NonTerminal, vector<vector<int>>>);
         void set_tokens(vector<Token>);
 
