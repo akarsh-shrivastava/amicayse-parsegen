@@ -1,6 +1,8 @@
 #include "parsegen.h"
-
 #include <algorithm>
+
+using namespace std;
+using namespace amicayse;
 
 ParseGen::ParseGen(unsigned char flag){
     flags = flag;
@@ -51,8 +53,10 @@ set<int> ParseGen::get_follow(NonTerminal tok){
                     vector<int>::iterator itr = l+1;
                     while(true){
                         if(itr==k->end()){
-                            set<int> t = get_follow(i->first);
-                            follow[tok].insert(t.begin(), t.end());
+                            if(tok != i->first){
+                                set<int> t = get_follow(i->first);
+                                follow[tok].insert(t.begin(), t.end());
+                            }
                             break;
                         }
                         else{
@@ -87,10 +91,10 @@ void ParseGen::calc_follow(){
         follow[i->first] = get_follow(i->first);
 
         // building table
-        if(flags == 0x01)
+        if(flags & 0x02)
             cout<<i->first<<": ";
         for(vector<vector<int>>::iterator j=rules[i->first].begin(); j!=rules[i->first].end(); ++j){
-            if(flags == 0x01)
+            if(flags & 0x01)
                 cout<<*(j->begin())<<" | ";
             if( *(j->begin()) == epsilon ){
                 for(set<int>::iterator k=follow[i->first].begin(); k!=follow[i->first].end(); ++k){
@@ -100,7 +104,7 @@ void ParseGen::calc_follow(){
                 }
             }
         }
-        if(flags == 0x01)
+        if(flags & 0x01)
             cout<<"\n";
     }
 }
@@ -133,7 +137,12 @@ ParseTreeNode* ParseGen::add_node(int node){
     }
     else{
         p = new ParseTreeNode((NonTerminal)node);
+        if(flags & 0x02)
+            cout<<"NonTerminal node created for "<<node<<"\n";
         r = table[(NonTerminal)node][itr->type];
+        if(flags & 0x02)
+            cout<<"Rule received\n";
+
         ParseTreeNode *x;
         for(vector<int>::iterator i=r->begin(); i!=r->end(); ++i){
             x = add_node(*i);

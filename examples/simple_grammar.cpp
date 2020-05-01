@@ -15,11 +15,14 @@
 #include <iostream>
 #include "../include/parsegen.h"
 
-enum TokenType : int{
+using namespace std;
+using namespace amicayse;
+
+enum amicayse::TokenType : int{
     a, b, c, d,
     EPSILON, DOLLAR
 };
-enum NonTerminal : int {
+enum amicayse::NonTerminal : int {
     S = numeric_limits<int>::min(), A, B, C 
 };
 int main(int argc, char** argv)
@@ -45,7 +48,7 @@ int main(int argc, char** argv)
         Token(c , "c", 1),
     };
 
-    ParseGen p1;
+    ParseGen p1(0);
     p1.set_rules(rules);
     p1.set_epsilon(EPSILON);
     p1.set_dollar(DOLLAR);
