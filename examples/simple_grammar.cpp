@@ -13,7 +13,7 @@
  */
 
 #include <iostream>
-#include "../include/parsegen.h"
+#include <amicayse/parsegen.h>
 
 using namespace std;
 using namespace amicayse;

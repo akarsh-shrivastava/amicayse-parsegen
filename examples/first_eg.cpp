@@ -12,7 +12,7 @@
  */
 
 #include <iostream>
-#include "../include/parsegen.h"
+#include "amicayse/parsegen.h"
 
 enum amicayse::TokenType : int{
     ADD, SUB, MUL, DIV, MOD,
