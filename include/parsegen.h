@@ -9,7 +9,6 @@
 
     namespace amicayse
     {
-        using namespace std;
         enum : unsigned char
         {
             PARSEGEN_VERBOSE_FOLLOW  = 0x1,
@@ -18,18 +17,18 @@
         class ParseGen
         {
             private:
-            map<NonTerminal, vector<vector<int>>> rules;
-            map<NonTerminal, set<int>> first, follow;
-            map<NonTerminal, map<TokenType, vector<vector<int>>::iterator>> table;
+            std::map<NonTerminal, std::vector<std::vector<int>>> rules;
+            std::map<NonTerminal, std::set<int>> first, follow;
+            std::map<NonTerminal, std::map<TokenType, std::vector<std::vector<int>>::iterator>> table;
 
             TokenType epsilon, dollar;
             NonTerminal start_symbol;
 
-            vector<Token> tokens;
-            vector<Token>::iterator itr;
+            std::vector<Token> tokens;
+            std::vector<Token>::iterator itr;
 
-            set<int> get_first(NonTerminal);
-            set<int> get_follow(NonTerminal);
+            std::set<int> get_first(NonTerminal);
+            std::set<int> get_follow(NonTerminal);
             ParseTreeNode* add_node(int);
 
             unsigned char flags;
@@ -37,8 +36,8 @@
             public:
             ParseGen(unsigned char);
 
-            void set_rules(map<NonTerminal, vector<vector<int>>>);
-            void set_tokens(vector<Token>);
+            void set_rules(std::map<NonTerminal, std::vector<std::vector<int>>>);
+            void set_tokens(std::vector<Token>);
 
             void set_epsilon(TokenType);
             void set_dollar(TokenType);

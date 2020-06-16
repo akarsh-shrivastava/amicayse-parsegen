@@ -91,7 +91,7 @@ void ParseGen::calc_follow(){
         follow[i->first] = get_follow(i->first);
 
         // building table
-        if(flags & 0x02)
+        if(flags & 0x01)
             cout<<i->first<<": ";
         for(vector<vector<int>>::iterator j=rules[i->first].begin(); j!=rules[i->first].end(); ++j){
             if(flags & 0x01)
@@ -120,6 +120,11 @@ ParseTreeNode* ParseGen::add_node(int node){
         if(node == itr->type){
             p = new ParseTreeNode(&(*itr));
             ++itr;
+            if(flags & 0x02){
+                cout<<"Terminal node created for "<<node<<"\t"; p->terminal->println();
+            }
+            if(flags & 0x02)
+                cout<<"Rule received\n";
         }
         else{
             throw ParserException(string()
