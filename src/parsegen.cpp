@@ -1,5 +1,6 @@
 #include "parsegen.h"
 #include <algorithm>
+#include <exception>
 
 using namespace std;
 using namespace amicayse;
@@ -109,7 +110,7 @@ void ParseGen::calc_follow(){
     }
 }
 
-ParseTreeNode* ParseGen::add_node(int node){
+ParseTreeNode* ParseGen::add_pt_node(int node){
     ParseTreeNode *p=NULL;
     vector<vector<int>>::iterator r;
 
@@ -144,13 +145,32 @@ ParseTreeNode* ParseGen::add_node(int node){
         p = new ParseTreeNode((NonTerminal)node);
         if(flags & 0x02)
             cout<<"NonTerminal node created for "<<node<<"\n";
-        r = table[(NonTerminal)node][itr->type];
+        try{
+            r = table.at((NonTerminal)node).at(itr->type);
+        }
+        catch(out_of_range ex){
+            string msg("Line ");
+            msg+=to_string(itr->line)+=": Expected ";
+            for(set<int>::iterator err_itr=follow.at((NonTerminal)node).begin(); err_itr!=follow.at((NonTerminal)node).end(); err_itr++){
+                if(err_itr != follow.at((NonTerminal)node).begin()){
+                    if(err_itr == std::prev(follow.at((NonTerminal)node).end())){
+                        msg+=" or ";
+                    }
+                    else{
+                        msg+=", ";
+                    }
+                }
+                msg+= std::to_string(*(err_itr));
+            }
+            msg+=", got "+to_string(itr->type)+":"+itr->lexeme+"\n";
+            throw ParserException(msg);
+        }
         if(flags & 0x02)
             cout<<"Rule received\n";
 
         ParseTreeNode *x;
         for(vector<int>::iterator i=r->begin(); i!=r->end(); ++i){
-            x = add_node(*i);
+            x = add_pt_node(*i);
             if(x)
                 p->add_child(x);
         }
@@ -181,9 +201,9 @@ void ParseGen::set_tokens(vector<Token> t){
     tokens.push_back(Token(dollar, "", -1));
     itr = tokens.begin();
 }
-ParseTreeNode* ParseGen::get_tree(){
+ParseTreeNode* ParseGen::get_parse_tree(){
     ParseTreeNode *p = NULL;
-    p = add_node(start_symbol);
+    p = add_pt_node(start_symbol);
 
     if (itr->type != dollar){
         throw ParserException(string()

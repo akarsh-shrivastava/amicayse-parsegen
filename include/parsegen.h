@@ -5,6 +5,7 @@
     #include <vector>
     #include <string>
     #include <limits>
+    #include <algorithm>
     #include "amicayse/utils.h"
 
     namespace amicayse
@@ -29,7 +30,7 @@
 
             std::set<int> get_first(NonTerminal);
             std::set<int> get_follow(NonTerminal);
-            ParseTreeNode* add_node(int);
+            ParseTreeNode* add_pt_node(int);
 
             unsigned char flags;
 
@@ -46,7 +47,7 @@
             void calc_first();
             void calc_follow();
 
-            ParseTreeNode* get_tree();
+            ParseTreeNode* get_parse_tree();
 
             // utils
             void print_rules();
